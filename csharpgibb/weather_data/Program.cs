@@ -9,7 +9,7 @@ namespace weather_data
         {
             Console.WriteLine("=== Weather Analyzer 1.0 ===");
             Console.WriteLine(args[0]);
-
+            
             var reader = new StreamReader(args[0]);
 
             double[,] data = { {0,0,99999}, {0,0,99999}, {0,0,99999}, {0,0,99999} };
