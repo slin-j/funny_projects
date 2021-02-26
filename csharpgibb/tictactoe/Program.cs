@@ -7,7 +7,7 @@ namespace tictactoe
         static void Main(string[] args)
         {            
             Board bd = new Board();
-            string playerOnTurn = "X";
+            string turningPlayer = "X";
             while(bd.isWin() == " ")
             {
                 if(bd.isGameDraw() == true)
@@ -17,18 +17,18 @@ namespace tictactoe
                 }
 
                 bd.drawBoardToConsole();
-                bd.waitForPlayer(playerOnTurn);
+                bd.waitForPlayer(turningPlayer);
                 bd.drawBoardToConsole();
 
                 
 
-                if(playerOnTurn.IndexOf("X") == 0)
+                if(turningPlayer.IndexOf("X") == 0)
                 {
-                    playerOnTurn = "O";
+                    turningPlayer = "O";
                 }
                 else
                 {
-                    playerOnTurn = "X";
+                    turningPlayer = "X";
                 }
             }
             if(bd.isWin() != " ")
