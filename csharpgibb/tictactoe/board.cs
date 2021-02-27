@@ -20,16 +20,42 @@ class Board
         Console.WriteLine(" " + _field[2,0] + " │ " + _field[2,1] + " │ " + _field[2,2]);
     }
 
-    public void waitForPlayer(string Player)
+    public bool waitForPlayer(string Player)
     {   
+        ClearCurrentConsoleLine();
         Console.Write("Player " + Player + ":");        // tell which player is turing next
         char input = Console.ReadKey().KeyChar;         // read user input (1 key without enter)
         input = char.ToLower(input);                    // ignore Upper/Lower case input
         int pos = "qweasdyxc".IndexOf(input);           // convert to a number
+        // invalid input, only allow q,w,e,a,s,d,y,x,c
+        if(pos == -1)
+            return false;
         // update datafiled of the current gamestate
-        if(pos < 3){_field[0,pos    ] = Player;return;} 
-        if(pos < 6){_field[1,pos - 3] = Player;return;}
-        if(pos < 9){_field[2,pos - 6] = Player;return;}
+        if(pos < 3)
+        {
+            if(_field[0,pos] == " ")        // if that field isnt occupied
+            {
+                _field[0,pos    ] = Player; // place player
+                return true;                // legit turn
+            }            
+        } 
+        else if(pos < 6)
+        {
+            if(_field[1,pos - 3] == " ")
+            {
+                _field[1,pos - 3] = Player;
+                return true;
+            }
+        }
+        else if(pos < 9)
+        {
+            if(_field[2,pos - 6] == " ")
+            {
+                _field[2,pos - 6] = Player;
+                return true;
+            }
+        }
+        return false;   // field was occupied
     }
 
     public string isWin()
@@ -78,5 +104,13 @@ class Board
             return true;    // all fields are occupied
         }
         return false;
+    }
+
+    private static void ClearCurrentConsoleLine()
+    {
+        int currentLineCursor = Console.CursorTop;
+        Console.SetCursorPosition(0, Console.CursorTop);
+        Console.Write(new string(' ', Console.WindowWidth)); 
+        Console.SetCursorPosition(0, currentLineCursor);
     }
 }

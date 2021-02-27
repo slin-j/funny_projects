@@ -17,11 +17,10 @@ namespace tictactoe
                 }
 
                 bd.drawBoardToConsole();
-                bd.waitForPlayer(turningPlayer);
+                while(!bd.waitForPlayer(turningPlayer)){}
                 bd.drawBoardToConsole();
 
-                
-
+                // toggle player
                 if(turningPlayer.IndexOf("X") == 0)
                 {
                     turningPlayer = "O";
@@ -31,7 +30,7 @@ namespace tictactoe
                     turningPlayer = "X";
                 }
             }
-            if(bd.isWin() != " ")
+            if(bd.isWin() != " ")   // if not draw
                 Console.WriteLine("Player " + bd.isWin() + " won!");
         }
     }
