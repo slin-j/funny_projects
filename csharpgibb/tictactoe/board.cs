@@ -3,6 +3,7 @@ using System;
 class Board
 {
     private string[,] _field = new string[3,3] {{" "," "," "},{" "," "," "},{" "," "," "}};
+
     public Board()
     {
 
@@ -33,14 +34,14 @@ class Board
         // position out of range
         if(pos < 0 && pos > 8)
             return false;
-            
+
         // convert 0..8 position to x-y positions
         int x = pos / 3;
         int y = pos % 3;
         
-        if(_field[x,y] == " ")
+        if(_field[x,y] == " ")  // if field is not occupied
         {
-            _field[x,y] = Player;
+            _field[x,y] = Player;   // place player
             return true;
         }
         else
@@ -81,6 +82,7 @@ class Board
     public bool isGameDraw()
     {
         string checkFillState = "";
+        
         // add all fields to one string
         for(int i = 0; i < 3; i++)
         {
@@ -89,6 +91,7 @@ class Board
                 checkFillState += _field[i,j];
             }
         }
+
         // check if there are some empty fields available
         if(checkFillState.IndexOf(" ") == -1)
         {
