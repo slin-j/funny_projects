@@ -12,15 +12,12 @@ namespace cars
             
             audiA6.TankUp(999);
             fiatPanda.TankUp(999);
-            panzer.TankUp(999);
 
             audiA6.Drive(120);
             fiatPanda.Drive(80);
-            panzer.Drive(1817);
 
             Console.WriteLine(audiA6.StatsToString());
             Console.WriteLine(fiatPanda.StatsToString());
-            Console.WriteLine(panzer.StatsToString());
         }
     }
 }
