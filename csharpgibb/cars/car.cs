@@ -1,14 +1,15 @@
 using System;
+
 class car
 {
-    private string _brand;              // Marke
-    private string _model;              // Modell
-    private string _number;             // Nummer
-    private double _tankCapacity;       // Tankkapazität [l]
-    private double _tankFillingLevel;   // Tankfüllstand [l]
-    private double _consumption;        // Verbrauch [l / 100 km]
-    private double _totalDistance;      // Tachostand [km]
-    private double _range;              // Reichweite mit dem aktuellen Tankfüllstand [km]
+    public string _brand{get; protected set;}              // Marke
+    public string _model{get; protected set;}              // Modell
+    public string _number{get; protected set;}             // Nummer
+    public double _tankCapacity{get; protected set;}       // Tankkapazität [l]
+    public double _tankFillingLevel{get; protected set;}   // Tankfüllstand [l]
+    public double _consumption{get; protected set;}        // Verbrauch [l / 100 km]
+    public double _totalDistance{get; protected set;}      // Tachostand [km]
+    public double _range{get; protected set;}              // Reichweite mit dem aktuellen Tankfüllstand [km]
 
     public car(string brand, string model, string number, double tankCapacity, double consumption)
     {
@@ -19,46 +20,51 @@ class car
         _consumption = consumption;
     }
 
+    public virtual double GetComsumption()     // Ruft den Verbrauch abhängig vom Ladegewicht ab
+    {
+        return _consumption;
+    }
+
     public void Drive(double distance)  // Bestimmte Strecke fahren
     {
         // total drivable distance in [km]
-        this._range = (this._tankFillingLevel/this._consumption)*100;
-        if(distance <= this._range)
+        _range = (_tankFillingLevel/GetComsumption())*100;
+        if(distance <= _range)
         {
-            this._totalDistance += distance;    // travel distance
-            this._range -= distance;            // update range
-            this._tankFillingLevel -= (this._consumption/100)*distance; // set new tank level
+            _totalDistance += distance;     // travel distance
+            _range -= distance;             // update range
+            _tankFillingLevel -= (GetComsumption()/100)*distance; // set new tank level
         }
         else
         {
-            this._totalDistance += this._range; // drive till tank empty
-            this._range = 0;                    // no more fuel
-            this._tankFillingLevel = 0;
+            _totalDistance += _range;       // drive till tank empty
+            _range = 0;                     // no more fuel
+            _tankFillingLevel = 0;
         }
     }
 
     public void TankUp(double fuel)     // Bestimmte Benzinmenge tanken
     {   
         // fuel up tank
-        this._tankFillingLevel += fuel;
+        _tankFillingLevel += fuel;
         // if tank is overfueld, set it to max
-        if(this._tankCapacity <= this._tankFillingLevel)
+        if(_tankCapacity <= _tankFillingLevel)
         {
-            this._tankFillingLevel = this._tankCapacity;
+            _tankFillingLevel = _tankCapacity;
         }
         // calculate new drivable range
-        this._range = (this._tankFillingLevel/this._consumption)*100;
+        _range = (_tankFillingLevel/GetComsumption())*100;
     }
 
-    public string StatsToString()            // Informationen als Zeichenkette abrufen
+    public virtual string StatsToString()            // Informationen als Zeichenkette abrufen
     {
         return 
-            this._brand + " " +
-            this._model + ", " +
-            this._number + "\n" +
-            "   Tank: " + Math.Round(this._tankFillingLevel,1).ToString() + "/" + this._tankCapacity.ToString() + " Liter\n   at " +
-            this._consumption.ToString() + "l/100km" +
-            "\n   We drove already " + this._totalDistance.ToString() + "km " +
-            "with " + Math.Round(this._range,2).ToString() + "km left.\n"; 
+            _brand + " " +
+            _model + ", " +
+            _number + "\n" +
+            "   Tank: " + Math.Round(_tankFillingLevel,1).ToString() + "/" + _tankCapacity.ToString() + " Liter\n   at " +
+            GetComsumption().ToString() + "l/100km" +
+            "\n   We drove already " + _totalDistance.ToString() + "km " +
+            "with " + Math.Round(_range,2).ToString() + "km left.\n"; 
     }
 }
