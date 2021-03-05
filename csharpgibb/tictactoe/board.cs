@@ -32,7 +32,7 @@ class Board
     public bool playerMove(string Player, int pos)
     {   
         // position out of range
-        if(pos < 0 && pos > 8)
+        if(pos < 0 || pos > 8)
             return false;
 
         // convert 0..8 position to x-y positions
