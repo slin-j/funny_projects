@@ -10,6 +10,22 @@ namespace tictactoe
             string turningPlayer = "X";
             bd.drawBoardToConsole();
 
+            /*
+            
+            TEST CHECNWININ1
+
+            string[,] tf = new string[3,3] {{" "," "," "},
+
+                                            {" "," "," "},
+                                            
+                                            {" ","X","X"}};
+            NeuralNetwork nn = new NeuralNetwork();
+            int asdf = -1;
+            asdf = nn.checkWinIn1(tf,"X");
+            Console.WriteLine(asdf);
+            
+            System.Environment.Exit(0); */
+
             while(bd.isWin() == " ")
             {
                 if(bd.isGameDraw() == true)
