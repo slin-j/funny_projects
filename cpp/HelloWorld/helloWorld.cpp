@@ -14,28 +14,19 @@ class vector
     }
 };
 
+void test(string* str)
+{
+    cout << "func:" << *str << endl;
+}
+
 int main()
 {
     vector vec1(100,100);
 
-    string input;
-
-    int ff[10] = {1,2,3,4,5,6,7,8,9,10};
-
-    for (auto &&i : ff)
-    {
-        cout << i <<endl;
-    }
-    
-    //cout << *ff; 
-
-    cout << "x:" << vec1.x << "y:" << vec1.y << endl;
-
-    cin >> input;
-    
-    int f = input.find(' ');
-
-    cout << "in:" << input << "find:" << f << endl;
+    string input = "slin";
+    string* p_in = &input;
+    test(p_in);
+    cout << *p_in << endl;
 
     return 0;
 }
