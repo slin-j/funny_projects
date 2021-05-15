@@ -27,9 +27,6 @@ class man
         unsigned int hangmanState = 0;
         std::vector<char> guessed_letters;
 
-        char animations[MAX_STATES] = {1,2,3,4,5,6,7,8,9,10};
-
-
 };
 
 #endif  // MAN_H

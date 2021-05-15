@@ -11,7 +11,6 @@ man::man()
 // deconstructor
 man::~man()
 {
-
 }
 
 // Methods
@@ -47,7 +46,7 @@ void man::print_game_state(void)
         std::cout << ',';
     }
 
-    std::cout << this->animations[this->hangmanState] << std::endl;
+    std::cout << "Your HP: " << 10-this->hangmanState << std::endl;
 }
 
 void man::new_word(std::string newWord)
@@ -59,6 +58,7 @@ void man::new_word(std::string newWord)
 
 bool man::guess_letter(char letter_in)
 {
+    // append
     this->guessed_letters.push_back(letter_in);
 
     // if letter not in word
@@ -96,7 +96,7 @@ bool man::is_word_correct(void)
 
 bool man::is_dead(void)
 {
-    if(this->hangmanState >= MAX_STATES)
+    if(!(this->hangmanState < MAX_STATES))
         return true;
 
     return false;
