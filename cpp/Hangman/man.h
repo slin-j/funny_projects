@@ -18,6 +18,9 @@ class man
         void print_game_state(void);
         void new_word(std::string word);
         bool guess_letter(char letter_in);
+        bool is_new_letter(char letter_in);
+        bool is_word_correct(void);
+        bool is_dead(void);
 
     private:
         std::string word_to_find = "";

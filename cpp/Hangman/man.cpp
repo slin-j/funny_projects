@@ -5,7 +5,7 @@
 // constructor
 man::man()
 {
-
+    this->hangmanState = 0;
 }
 
 // deconstructor
@@ -47,7 +47,7 @@ void man::print_game_state(void)
         std::cout << ',';
     }
 
-    std::cout << this->animations[hangmanState] << std::endl;
+    std::cout << this->animations[this->hangmanState] << std::endl;
 }
 
 void man::new_word(std::string newWord)
@@ -59,7 +59,6 @@ void man::new_word(std::string newWord)
 
 bool man::guess_letter(char letter_in)
 {
-    std::cout << "dbg" << letter_in << std::endl;
     this->guessed_letters.push_back(letter_in);
 
     // if letter not in word
@@ -70,4 +69,35 @@ bool man::guess_letter(char letter_in)
     }
 
     return true;
+}
+
+bool man::is_new_letter(char letter_in)
+{
+    for(char c : this->guessed_letters)
+    {
+        if(c == letter_in)
+            return false;
+    }
+    return true;
+}
+
+bool man::is_word_correct(void)
+{
+    for (char c : this->word_to_find)
+    {
+        // if the letter in word was guessed already
+        if(std::find(this->guessed_letters.begin(), this->guessed_letters.end(), c) != this->guessed_letters.end())
+            continue;
+
+        return false;
+    }
+    return true;
+}
+
+bool man::is_dead(void)
+{
+    if(this->hangmanState >= MAX_STATES)
+        return true;
+
+    return false;
 }

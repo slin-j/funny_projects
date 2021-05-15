@@ -46,7 +46,8 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "${workspaceFolder}/**"
             ],
             "options": {
                 "cwd": "C:\\cygwin64\\bin"
