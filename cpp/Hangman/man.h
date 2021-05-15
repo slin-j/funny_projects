@@ -1,3 +1,6 @@
+#ifndef MAN_H
+#define MAN_H
+
 #include <iostream> 
 #include <vector> 
 
@@ -25,3 +28,5 @@ class man
 
 
 };
+
+#endif  // MAN_H

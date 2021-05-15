@@ -22,13 +22,12 @@ void man::print_game_state(void)
     for (char c : this->word_to_find)
     {
         // if the letter in word was guessed already
-        if(std::find(this->guessed_letters.begin(), this->guessed_letters.end(), c) == this->guessed_letters.end())
+        if(std::find(this->guessed_letters.begin(), this->guessed_letters.end(), c) != this->guessed_letters.end())
             progress += c;
         else
             progress += '_';
 
         progress += ' ';
-
     }
     std::cout << progress << std::endl << std::endl;
 
@@ -60,6 +59,7 @@ void man::new_word(std::string newWord)
 
 bool man::guess_letter(char letter_in)
 {
+    std::cout << "dbg" << letter_in << std::endl;
     this->guessed_letters.push_back(letter_in);
 
     // if letter not in word
