@@ -1,32 +1,24 @@
 #include <iostream> 
+#include <vector>
+#include <time.h>
 using namespace std;
-
-class vector
-{
-    public:
-        float x;
-        float y;
-
-    vector(float x_val, float y_val)
-    {
-        x = x_val;
-        y = y_val;
-    }
-};
-
-void test(string* str)
-{
-    cout << "func:" << *str << endl;
-}
 
 int main()
 {
-    vector vec1(100,100);
+    vector<string> asdf;
+    
 
-    string input = "slin";
-    string* p_in = &input;
-    test(p_in);
-    cout << *p_in << endl;
+    asdf.push_back("h");
+    asdf.push_back("allo"); 
+
+    string st = "hallo velo";
+    string st2 = "hallo";
+
+
+    cout << st << endl;
+
+    for(string i : asdf)
+        cout << i << endl;
 
     return 0;
 }
