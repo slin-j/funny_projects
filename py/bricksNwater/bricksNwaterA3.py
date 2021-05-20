@@ -33,11 +33,33 @@ def how_much_water(bricks_array: list) -> int:
 
     return result
 
+
+def how_much_water2(bricks_array: list) -> int:
+    stored_water = 0
+    #Länge der Liste
+    l = len(bricks_array)
+    #Für jedes Element in der Liste
+    for i in range(l):
+        #Maximum finden auf der linken Seite
+        left = bricks_array[i]
+        for j in range(i):
+            left = max(left, bricks_array[j])
+            
+        #Maximum finden auf der rechten Seite
+        right = bricks_array[i]
+        for j in range(i + 1, l):
+            right = max(right, bricks_array[j])
+
+        #Gesammeltes Wasser
+        stored_water = stored_water + (min(left,right) - bricks_array[i])     
+
+    return stored_water
+
 n = 1000
 time_n = time_ns()
 
 for i in range(n):
-    how_much_water(r7)
+    how_much_water2(r1)
 
 print("took: ", (time_ns() - time_n) / n / 1000,"us / run", sep="")
 print("took: ", (time_ns() - time_n) / 1000,"us all in all", sep="")
