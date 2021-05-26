@@ -1,4 +1,4 @@
-import time
+import timeit
 
 def get_pascals_triangle_row(row_number: int) -> list:
     lst = [1]
@@ -14,11 +14,11 @@ def get_pascals_triangle_row(row_number: int) -> list:
 
     return lst
 
-time_start = time.time()
+time_start = timeit.default_timer()
 
-for i in range(500):
-    print(get_pascals_triangle_row(i))
+#for i in range(500):
+get_pascals_triangle_row(500)
 
 print("=======================================")
-print("Took: ", time.time()-time_start)
+print("Took: ", timeit.default_timer()-time_start)
 
