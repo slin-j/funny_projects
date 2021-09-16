@@ -4,7 +4,8 @@ class miner:
     def __init__(self, position:tuple) -> None:
         if len(position) == 2:
             self.position = position
-            self.size = (30, 30) # px
+            self.size = (20, 20) # px
+            self.is_valid_pos = False
 
     def draw_shape(self, surface:pygame.Surface):
         r = pygame.Rect(self.position, self.size)
