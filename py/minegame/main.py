@@ -27,6 +27,9 @@ conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)
 
 font_normal = pygame.font.SysFont("monospace",16)
 
+for i in range(10 - 1, 0, -1):
+    print(i)
+
 i = 0
 
 while True:
@@ -56,8 +59,6 @@ while True:
     for c in conveyor_list:
         c.draw_shape_with_materials(game_map.bg)
     
-
-
     # show new graphics
     game_surface.blit(game_map.bg, (0, 0))
     text = font_normal.render("Score {0}".format(69), 1, (0,0,0))
