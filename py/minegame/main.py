@@ -1,5 +1,6 @@
 import sys
 import pygame
+import time
 
 import environment
 import resource_collect
@@ -18,17 +19,18 @@ game_surface = pygame.display.set_mode((SCR_WIDTH, SCR_HEIGHT),0,32)  # screen
 
 game_map = environment.earth(game_surface)
 miner1 = resource_collect.miner((15*20,10*20))
-conv1 = transport.conveyor_belt([(16*20,10*20), (17*20,10*20), (18*20,10*20), (19*20,10*20), (20*20,10*20), (21*20,10*20), (22*20,10*20), (23*20,10*20), (24*20,10*20), (25*20,10*20), (25*20,11*20), (25*20,12*20), (25*20,13*20), (25*20,14*20)])
+#conv1 = transport.conveyor_belt([(16*20,10*20), (17*20,10*20), (18*20,10*20), (19*20,10*20), (20*20,10*20), (21*20,10*20), (22*20,10*20), (23*20,10*20), (24*20,10*20), (25*20,10*20), (25*20,11*20), (25*20,12*20), (25*20,13*20), (25*20,14*20), (26*20,14*20), (27*20,14*20), (28*20,14*20), (29*20,14*20), (30*20,14*20), (31*20,14*20)])
 
 conveyor_list = []
-conveyor_list.append(conv1)
+conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)] + 
+                                             [(40*20,y*20) for y in range(10,25)]))
 
 font_normal = pygame.font.SysFont("monospace",16)
 
 i = 0
 
 while True:
-    clock.tick(200) # fps
+    clock.tick(100) # fps
     
     # user input events
     for event in pygame.event.get():
@@ -39,17 +41,22 @@ while True:
             if event.key == pygame.K_q:
                 pygame.quit()
                 sys.exit()
-    
+            if event.key == pygame.K_f:
+                conveyor_list[0].add_material(entitiy.copper())
+
+    for c in conveyor_list:
+        c.incr_material_positions()
+
+    if miner1.did_material_spawn() == True: conveyor_list[0].add_material(entitiy.copper())
+
     # draw plain map
-    game_map.draw_background()
+    game_map.draw_dbg_grid(SCR_HEIGHT, SCR_WIDTH)
     # draw machines and belts on map
     miner1.draw_shape(game_map.bg)
     for c in conveyor_list:
         c.draw_shape_with_materials(game_map.bg)
     
-    if i % 6 == 0: conv1.add_material(entitiy.copper())
 
-    c.incr_material_positions()
 
     # show new graphics
     game_surface.blit(game_map.bg, (0, 0))
