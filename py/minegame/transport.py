@@ -1,10 +1,12 @@
 import pygame
 import time
 
-import entitiy
+import entity
 
 class conveyor_belt: 
     def __init__(self, positions:list[tuple]) -> None:
+        super().__init__()
+
         self.UPDATE_INTERVAL = 200e6 # 200ms
         self.last_update = time.time_ns()
 
@@ -19,7 +21,7 @@ class conveyor_belt:
         for m in self.materials:
             m.draw_shape(self.positions[m.index_on_conv], surface)
 
-    def add_material(self, new_mat:entitiy):
+    def add_material(self, new_mat:entity):
         self.materials.append(new_mat)
         # self.materials[-1].set_pos(self.positions[0]) # set startposition of new material to the beginning of the belt
 

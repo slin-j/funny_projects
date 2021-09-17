@@ -5,7 +5,7 @@ import time
 import environment
 import resource_collect
 import transport
-import entitiy
+import entity
 
 SCR_WIDTH = 1000
 SCR_HEIGHT = 600
@@ -42,12 +42,12 @@ while True:
                 pygame.quit()
                 sys.exit()
             if event.key == pygame.K_f:
-                conveyor_list[0].add_material(entitiy.copper())
+                conveyor_list[0].add_material(entity.copper())
 
     for c in conveyor_list:
         c.incr_material_positions()
 
-    if miner1.did_material_spawn() == True: conveyor_list[0].add_material(entitiy.copper())
+    if miner1.did_material_spawn() == True: conveyor_list[0].add_material(entity.copper())
 
     # draw plain map
     game_map.draw_dbg_grid(SCR_HEIGHT, SCR_WIDTH)

@@ -2,7 +2,7 @@ import pygame
 
 import transport
 
-class entitiy:
+class entity:
     def __init__(self) -> None:
         self.pos = [] # dynamic position
         self.size = (12, 12)
@@ -14,7 +14,7 @@ class entitiy:
         self.pos[0] += dx
         self.pos[1] += dy
 
-class copper(entitiy):
+class copper(entity):
     def __init__(self) -> None:
         super().__init__()
         self.index_on_conv = 0
