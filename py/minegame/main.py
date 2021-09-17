@@ -18,39 +18,44 @@ game_surface = pygame.display.set_mode((SCR_WIDTH, SCR_HEIGHT),0,32)  # screen
 
 game_map = environment.earth(game_surface)
 miner1 = resource_collect.miner((15*20,10*20))
-conv = transport.conveyor_belt([(16*20,10*20), (17*20,10*20), (18*20,10*20), (19*20,10*20), (20*20,10*20), 
-                                (21*20,10*20), (22*20,10*20), (23*20,10*20), (24*20,10*20), (25*20,10*20), 
-                                (25*20,11*20), (25*20,12*20), (25*20,13*20), (25*20,14*20)])
-copper = entitiy.copper(conv.get_positions())
+conv1 = transport.conveyor_belt([(16*20,10*20), (17*20,10*20), (18*20,10*20), (19*20,10*20), (20*20,10*20), (21*20,10*20), (22*20,10*20), (23*20,10*20), (24*20,10*20), (25*20,10*20), (25*20,11*20), (25*20,12*20), (25*20,13*20), (25*20,14*20)])
 
-entitiy_list = []
-entitiy_list.append(copper)
+conveyor_list = []
+conveyor_list.append(conv1)
 
 font_normal = pygame.font.SysFont("monospace",16)
 
 i = 0
 
 while True:
-    clock.tick(20) # gametick
-
+    clock.tick(200) # fps
+    
     # user input events
     for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
                 pygame.quit()
                 sys.exit()
-
+    
+    # draw plain map
     game_map.draw_background()
+    # draw machines and belts on map
     miner1.draw_shape(game_map.bg)
-    conv.draw_shape(game_map.bg)
-    for e in entitiy_list: e.draw_shape(game_map.bg)
-    i += 1
-    if i == 5:
-        i = 0
-        for e in entitiy_list:
-            if e.update_pos_on_conveyor() == False: del e; continue
+    for c in conveyor_list:
+        c.draw_shape_with_materials(game_map.bg)
+    
+    if i % 6 == 0: conv1.add_material(entitiy.copper())
+
+    c.incr_material_positions()
 
     # show new graphics
     game_surface.blit(game_map.bg, (0, 0))
     text = font_normal.render("Score {0}".format(69), 1, (0,0,0))
     game_surface.blit(text, (5,10))
     pygame.display.update()
+
+    i += 1
+    if i == 100: i = 0
