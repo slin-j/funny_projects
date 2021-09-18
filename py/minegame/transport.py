@@ -31,8 +31,7 @@ class conveyor_belt:
             return True
         return False
 
-    #todo rename to move_materials
-    def incr_material_positions(self) -> bool:
+    def move_materials(self) -> bool:
         one_gets_yeeted = False
         q = 0
         for p in self.pieces: 
@@ -51,6 +50,9 @@ class conveyor_belt:
 
             return one_gets_yeeted
             #todo what to do when belt ends?
+
+    def is_first_piece_empty(self):
+        return self.pieces[0].holding_entity == None #! belt must have a length >0
 
     # def get_positions(self) -> list[tuple]:
     #     return self.positions.copy()

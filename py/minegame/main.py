@@ -27,9 +27,6 @@ conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)
 
 font_normal = pygame.font.SysFont("monospace",16)
 
-for i in range(10 - 1, 0, -1):
-    print(i)
-
 i = 0
 
 while True:
@@ -48,9 +45,11 @@ while True:
                 conveyor_list[0].add_material(entity.copper())
 
     for c in conveyor_list:
-        c.incr_material_positions()
-
-    if miner1.did_material_spawn() == True: conveyor_list[0].add_material(entity.copper())
+        c.move_materials()
+    print(len(miner1.internal_buffer))
+    if miner1.update_spawner() > 0:
+        if conveyor_list[0].is_first_piece_empty() == True:
+            conveyor_list[0].add_material(miner1.get_material_from_buffer(1)[0])
 
     # draw plain map
     game_map.draw_dbg_grid(SCR_HEIGHT, SCR_WIDTH)
