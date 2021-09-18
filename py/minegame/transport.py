@@ -1,3 +1,4 @@
+import os
 import pygame
 import time
 
@@ -15,7 +16,7 @@ class interface_in:
     def import_material_from_belt(self):
         if len(self.in_buffer) < self.in_buffer_size:
             e = self.in_belt.collect_entity()
-            if e != None: self.storage.append(e)
+            if e != None: self.in_buffer.append(e)
 
 class interface_out:
     def __init__(self) -> None:
@@ -42,6 +43,8 @@ class conveyor_belt:
     def __init__(self, positions:list[tuple]) -> None:
         self.UPDATE_INTERVAL = 200e6 # 200ms
         self.last_update = time.time_ns()
+        self.img = pygame.image.load(os.path.join(os.path.dirname(__file__), 'graphics', 'belts', 'tier1_lr.png')).convert_alpha()
+        self.img = pygame.transform.rotate(self.img, 90)
 
         self.pieces = []
         for p in positions:
@@ -51,8 +54,7 @@ class conveyor_belt:
 
     def draw_shape_with_materials(self, surface:pygame.Surface):
         for p in self.pieces:
-            r = pygame.Rect(p.pos, self.size)
-            pygame.draw.rect(surface, [128, 128 , 128], r)
+            surface.blit(self.img, p.pos)
             if p.holding_entity != None: p.holding_entity.draw_shape(p.pos, surface)
 
     def add_material(self, new_mat:entity) -> bool:

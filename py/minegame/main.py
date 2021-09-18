@@ -7,6 +7,7 @@ import resource_collect
 import transport
 import entity
 import storage
+import os
 
 SCR_WIDTH = 1000
 SCR_HEIGHT = 600
@@ -26,9 +27,11 @@ cont1 = storage.storage_container((40*20,25*20))
 conveyor_list = []
 conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)] + 
                                              [(40*20,y*20) for y in range(10,25)]))
+conveyor_list.append(transport.conveyor_belt([x*20, 26*20] for x in range(40,20,-1)))
 
 miner1.set_out_belt(conveyor_list[0])
 cont1.set_in_belt(conveyor_list[0])
+cont1.set_out_belt(conveyor_list[1])
 
 font_normal = pygame.font.SysFont("monospace",16)
 
@@ -49,6 +52,7 @@ while True:
             if event.key == pygame.K_f:
                 conveyor_list[0].add_material(entity.copper())
 
+
     for c in conveyor_list:
         c.move_materials()
 
@@ -56,7 +60,8 @@ while True:
     miner1.export_material_to_belt()
 
     cont1.import_material_from_belt()
-    cont1.get_mat_from_input()
+
+    cont1.export_material_to_belt()
 
     print(len(cont1.storage))
 

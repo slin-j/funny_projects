@@ -1,4 +1,5 @@
 import pygame
+import os
 
 import transport
 
@@ -18,13 +19,13 @@ class copper(entity):
     def __init__(self) -> None:
         super().__init__()
         self.index_on_conv = 0
+        self.img = pygame.image.load(os.path.join(os.path.dirname(__file__), 'graphics', 'ores', 'copper.png')).convert_alpha()
 
     def set_pos(self, new_pos:tuple):
         self.pos = new_pos
 
     def draw_shape(self, pos:tuple, surface:pygame.Surface):
-        r = pygame.Rect((pos[0]+4, pos[1]+4), self.size)
-        pygame.draw.rect(surface, [150, 67, 8], r)
+        surface.blit(self.img, pos)
 
         
 
