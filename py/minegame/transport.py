@@ -7,6 +7,7 @@ class belt_piece:
     def __init__(self, pos:tuple) -> None:
         self.pos = pos
         self.holding_entity = None # holds entities
+        self.is_standing = False # only really needed for the last piece to ensure the collect only takes it when it waited there for one update-cycle
 
 class conveyor_belt: 
     def __init__(self, positions:list[tuple]) -> None:
@@ -32,27 +33,30 @@ class conveyor_belt:
         return False
 
     def move_materials(self) -> bool:
-        one_gets_yeeted = False
-        q = 0
-        for p in self.pieces: 
-            if p.holding_entity != None: 
-                q += 1
         if time.time_ns() - self.last_update >= self.UPDATE_INTERVAL:
             self.last_update += self.UPDATE_INTERVAL
 
             for i in range(len(self.pieces), 0, -1):
                 if i-1 < len(self.pieces) - 1:
+                    self.pieces[i-1].is_standing = False
                     if self.pieces[i].holding_entity == None:
                         self.pieces[i].holding_entity = self.pieces[i-1].holding_entity
                         self.pieces[i-1].holding_entity = None
                 else:
-                    if self.pieces[-1].holding_entity != None: one_gets_yeeted = self.pieces[-1]
-
-            return one_gets_yeeted
-            #todo what to do when belt ends?
+                    if self.pieces[-1].holding_entity != None: 
+                        self.pieces[-1].is_standing = True # ready to get collected by input
 
     def is_first_piece_empty(self):
         return self.pieces[0].holding_entity == None #! belt must have a length >0
+
+    # lets you collect the entity on the last belt-piece
+    def collect_entity(self):
+        if self.pieces[-1].is_standing == True:
+            e = self.pieces[-1].holding_entity
+            self.pieces[-1].holding_entity = None; self.pieces[-1].is_standing = False
+            return e
+        return None
+
 
     # def get_positions(self) -> list[tuple]:
     #     return self.positions.copy()
