@@ -1,28 +1,23 @@
 import pygame
+import time
+
+import transport
 
 STORAGE_SIZE = 1000
 
-class storage_container:
+class storage_container(transport.interface_in, transport.interface_out):
     def __init__(self, position:tuple) -> None:
+        super().__init__()
+        self.in_buffer_size = 1
         if len(position) == 2:
             self.pos = position
             self.storage = []
-            self.input_belt = None
-            self.output_belt = None
             self.size = (20, 20) # px
 
     def draw_shape(self, surface:pygame.Surface):
         r = pygame.Rect(self.pos, self.size)
         pygame.draw.rect(surface, [0, 0 , 0], r)
 
-    def set_input_belt(self, b):
-        self.input_belt = b
-
-    def set_output_belt(self, b):
-        self.output_belt = b
-
     def get_mat_from_input(self):
-        if len(self.storage) < STORAGE_SIZE:
-            e = self.input_belt.collect_entity()
-            if e != None:
-                self.storage.append(e)
+        if len(self.storage) < STORAGE_SIZE and len(self.in_buffer) > 0:
+            self.storage.append(self.in_buffer.pop(0))

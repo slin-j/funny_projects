@@ -3,20 +3,17 @@ import time
 import numpy as np
 
 import entity
+import transport
 
-class miner:
+class miner(transport.interface_out):
     def __init__(self, position:tuple) -> None:
+        super().__init__()
         self.PRODUCTION_RATE = 400e6 # 400ms
         self.last_update = time.time_ns()
 
         if len(position) == 2:
             self.position = position
-            self.internal_buffer = []
-            self.adjecent_belt = None
             self.size = (20, 20) # px
-
-    def set_adjecent_belt(self, b):
-        self.adjecent_belt = b
 
     def draw_shape(self, surface:pygame.Surface):
         r = pygame.Rect(self.position, self.size)
@@ -26,13 +23,6 @@ class miner:
     def update_spawner(self):
         if time.time_ns() - self.last_update >= self.PRODUCTION_RATE:
             self.last_update += self.PRODUCTION_RATE
-            if len(self.internal_buffer) < 100 and len(self.internal_buffer) >= 0:
-                self.internal_buffer.append(entity.copper()) #todo settable materialtype
-        return len(self.internal_buffer)
+            if len(self.out_buffer) < 100 and len(self.out_buffer) >= 0:
+                self.out_buffer.append(entity.copper()) #todo settable materialtype
 
-    def get_material_from_buffer(self, cnt:int):
-        if len(self.internal_buffer) >= cnt and cnt < 100 and cnt > 0:
-            r = self.internal_buffer[:cnt]
-            self.internal_buffer = self.internal_buffer[cnt:]
-            return r
-        return False

@@ -27,8 +27,8 @@ conveyor_list = []
 conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)] + 
                                              [(40*20,y*20) for y in range(10,25)]))
 
-miner1.set_adjecent_belt(conveyor_list[0])
-cont1.set_input_belt(conveyor_list[0])
+miner1.set_out_belt(conveyor_list[0])
+cont1.set_in_belt(conveyor_list[0])
 
 font_normal = pygame.font.SysFont("monospace",16)
 
@@ -52,10 +52,10 @@ while True:
     for c in conveyor_list:
         c.move_materials()
 
-    if miner1.update_spawner() > 0:
-        if miner1.adjecent_belt != None and miner1.adjecent_belt.is_first_piece_empty() == True:
-            miner1.adjecent_belt.add_material(miner1.get_material_from_buffer(1)[0])
+    miner1.update_spawner() 
+    miner1.export_material_to_belt()
 
+    cont1.import_material_from_belt()
     cont1.get_mat_from_input()
 
     print(len(cont1.storage))

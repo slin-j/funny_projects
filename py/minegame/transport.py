@@ -3,6 +3,35 @@ import time
 
 import entity
 
+class interface_in:
+    def __init__(self) -> None:
+        self.in_buffer = []
+        self.in_buffer_size = 100
+        self.in_belt = None
+
+    def set_in_belt(self, belt):
+        self.in_belt = belt
+
+    def import_material_from_belt(self):
+        if len(self.in_buffer) < self.in_buffer_size:
+            e = self.in_belt.collect_entity()
+            if e != None: self.storage.append(e)
+
+class interface_out:
+    def __init__(self) -> None:
+        self.out_buffer = []
+        self.out_buffer_size = 100
+        self.out_belt = None
+
+    def set_out_belt(self, belt):
+        self.out_belt = belt
+
+    # transfer entity from out_buffer to out_belt, if space is available and buffer not empty
+    def export_material_to_belt(self):
+        if len(self.out_buffer) >= 1 and self.out_belt.is_first_piece_empty() == True:
+            self.out_belt.add_material(self.out_buffer.pop(0))
+        return False
+
 class belt_piece:
     def __init__(self, pos:tuple) -> None:
         self.pos = pos
