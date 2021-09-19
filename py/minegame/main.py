@@ -1,22 +1,20 @@
 import sys
 import pygame
 import time
+import os
 
 import environment
 import resource_collect
 import transport
 import entity
 import storage
-import os
-
-SCR_WIDTH = 1000
-SCR_HEIGHT = 600
+import img_loader
 
 pygame.init()
 
 pygame.display.set_caption('minegame')
 clock = pygame.time.Clock()
-game_surface = pygame.display.set_mode((SCR_WIDTH, SCR_HEIGHT),0,32)  # screen
+game_surface = pygame.display.set_mode((img_loader.SCR_WIDTH, img_loader.SCR_HEIGHT),0,32)  # screen
 # menu_surface = pygame.display.set_mode((SCR_WIDTH, SCR_HEIGHT),0,32)  # screen
 
 game_map = environment.earth(game_surface)
@@ -25,13 +23,13 @@ cont1 = storage.storage_container((40*20,25*20))
 #conv1 = transport.conveyor_belt([(16*20,10*20), (17*20,10*20), (18*20,10*20), (19*20,10*20), (20*20,10*20), (21*20,10*20), (22*20,10*20), (23*20,10*20), (24*20,10*20), (25*20,10*20), (25*20,11*20), (25*20,12*20), (25*20,13*20), (25*20,14*20), (26*20,14*20), (27*20,14*20), (28*20,14*20), (29*20,14*20), (30*20,14*20), (31*20,14*20)])
 
 conveyor_list = []
-conveyor_list.append(transport.conveyor_belt([(x*20,10*20) for x in range(16,40)] + 
-                                             [(40*20,y*20) for y in range(10,25)]))
-conveyor_list.append(transport.conveyor_belt([x*20, 26*20] for x in range(40,20,-1)))
+conveyor_list.append(transport.conveyor_belt(([(x*20,10*20) for x in range(16,40)] + 
+                                             [(40*20,y*20) for y in range(10,25)]), tier=1))
+conveyor_list.append(transport.conveyor_belt(([x*20, 26*20] for x in range(40,20,-1)), tier=1))
 
-miner1.set_out_belt(conveyor_list[0])
-cont1.set_in_belt(conveyor_list[0])
-cont1.set_out_belt(conveyor_list[1])
+miner1.set_out_belt(conveyor_list[0], miner1.position)
+cont1.set_in_belt(conveyor_list[0], cont1.pos)
+cont1.set_out_belt(conveyor_list[1], cont1.pos)
 
 font_normal = pygame.font.SysFont("monospace",16)
 
@@ -63,16 +61,19 @@ while True:
 
     cont1.export_material_to_belt()
 
-    print(len(cont1.storage))
+    # print(len(cont1.storage))
 
     # draw plain map
-    game_map.draw_dbg_grid(SCR_HEIGHT, SCR_WIDTH)
+    game_map.draw_dbg_grid(img_loader.SCR_HEIGHT, img_loader.SCR_WIDTH)
     # draw machines and belts on map
     miner1.draw_shape(game_map.bg)
     cont1.draw_shape(game_map.bg)
     for c in conveyor_list:
         c.draw_shape_with_materials(game_map.bg)
     
+
+    for i in range(8):
+        game_map.bg.blit(img_loader.belt[i], (20 + (i*20),40))
     # show new graphics
     game_surface.blit(game_map.bg, (0, 0))
     text = font_normal.render("Score {0}".format(69), 1, (0,0,0))
