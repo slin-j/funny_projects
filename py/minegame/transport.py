@@ -46,7 +46,11 @@ class conveyor_belt:
     def __init__(self, positions:list[tuple], tier:int) -> None:
         if tier > 0 and tier <= 5:
             self.tier = tier
-            self.UPDATE_INTERVAL = 200e6 * tier # 200ms
+            if self.tier == 1: self.UPDATE_INTERVAL = 1.000e9 # 60/min
+            elif self.tier == 2: self.UPDATE_INTERVAL = 5.000e8 # 120/min
+            elif self.tier == 3: self.UPDATE_INTERVAL = 2.222e8 # 270/min
+            elif self.tier == 4: self.UPDATE_INTERVAL = 1.250e8 # 450/min
+            elif self.tier == 5: self.UPDATE_INTERVAL = 7.692e7 # 780/min
         else: raise ValueError('Invalid belt tier! Valid are 1 to 5')
         self.last_update = time.time_ns()
 
@@ -147,7 +151,8 @@ class conveyor_belt:
     def collect_entity(self):
         if self.pieces[-1].is_standing == True:
             e = self.pieces[-1].holding_entity
-            self.pieces[-1].holding_entity = None; self.pieces[-1].is_standing = False
+            self.pieces[-1].holding_entity = self.pieces[-2].holding_entity
+            self.pieces[-1].is_standing = False
             return e
         return None
 

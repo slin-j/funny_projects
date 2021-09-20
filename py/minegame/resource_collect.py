@@ -8,12 +8,12 @@ import transport
 class miner(transport.interface_out):
     def __init__(self, position:tuple) -> None:
         super().__init__()
-        self.PRODUCTION_RATE = 400e6 # 400ms
+        self.PRODUCTION_RATE = 2.222e8 # 400ms
         self.last_update = time.time_ns()
 
         if len(position) == 2:
             self.position = position
-            self.size = (20, 20) # px
+            self.size = (20, 20)
 
     def draw_shape(self, surface:pygame.Surface):
         r = pygame.Rect(self.position, self.size)
