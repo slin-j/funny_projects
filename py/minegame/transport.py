@@ -83,15 +83,15 @@ class conveyor_belt:
                 return img.belt[2 + belt_tier*8]
             if input[1].pos[1] < input[2].pos[1]: # out to bottom
                 return img.belt[3 + belt_tier*8]
-        if len(input[2].pos) != 2: # no input block found
+        if len(input[2].pos) != 2: # no output block found
             if input[0].pos[0] > input[1].pos[0]: # in from the right
                 return img.belt[2 + belt_tier*8]
             if input[0].pos[1] < input[1].pos[1]: # in from top
                 return img.belt[3 + belt_tier*8]
             if input[0].pos[0] < input[1].pos[0]: # in from the left
-                return img.belt[1 + belt_tier*8]
-            if input[0].pos[1] > input[1].pos[1]: # in from below
                 return img.belt[0 + belt_tier*8]
+            if input[0].pos[1] > input[1].pos[1]: # in from below
+                return img.belt[1 + belt_tier*8]
 
         if input[0].pos[0] < input[1].pos[0]: # in from the left
             if input[1].pos[0] < input[2].pos[0]: # out to the right

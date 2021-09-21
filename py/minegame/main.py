@@ -101,9 +101,9 @@ while True:
         c.draw_shape_with_materials(game_map.bg)
     
     # show all belt-graphics
-    # for j in range(5):
-    #     for i in range(8):
-    #         game_map.bg.blit(img_loader.belt[i + (j*8)], (20 + (i*20),40 + (j*20)))
+    for j in range(5):
+        for i in range(8):
+            game_map.bg.blit(img_loader.belt[i + (j*8)], (20 + (i*20),40 + (j*20)))
     
     # show new graphics
     game_surface.blit(game_map.bg, (0, 0))
