@@ -4,11 +4,16 @@ import time
 
 import entity
 import img_loader as img
+import transport
 
-def validate_belt_geometry(input:list):
+def validate_belt_geometry(user, input:list):
     if len(input) == 0: return False
     if len(input) == 1: return True
     for i in range(len(input)-1):
+        if user.is_pos_occupied(input[i]) == transport.conveyor_belt:
+            print(user.is_pos_occupied(input[i]))
+            print('asdfafs')
+            return False
         dx = abs(input[i][0]-input[i+1][0])
         dy = abs(input[i][1]-input[i+1][1])
         if (dx == 20 and dy == 0) or (dx == 0 and dy == 20): # valid if they are touching eachother on only one side
@@ -50,8 +55,10 @@ class interface_out:
 
     # transfer entity from out_buffer to out_belt, if space is available and buffer not empty
     def export_material_to_belt(self):
-        if len(self.out_buffer) >= 1 and self.out_belt.is_first_piece_empty() == True:
-            self.out_belt.add_material(self.out_buffer.pop(0))
+        try:
+            if len(self.out_buffer) >= 1 and self.out_belt.is_first_piece_empty() == True:
+                self.out_belt.add_material(self.out_buffer.pop(0))
+        except: pass
         return False
 
 class belt_piece:
@@ -62,7 +69,7 @@ class belt_piece:
         self.belt_img_index = img.no_texture # index in the img_loader.belt list (graphic for this belt-piece)
 
 class conveyor_belt: 
-    def __init__(self, positions:list[tuple], tier:int) -> None:
+    def __init__(self, positions:list, tier:int) -> None:
         if tier > 0 and tier <= 5:
             self.tier = tier
             if self.tier == 1: self.UPDATE_INTERVAL = 1.000e9 # 60/min
@@ -75,7 +82,7 @@ class conveyor_belt:
 
         self.pieces = []
         for p in positions:
-            self.pieces.append(belt_piece(p))
+            self.pieces.append(belt_piece((p[0], p[1])))
 
         # positions from the in and output-machine (used for belt-directions)
         self.in_block_pos = ()
@@ -133,3 +140,6 @@ class conveyor_belt:
             self.pieces[-1].is_standing = False
             return e
         return None
+
+    def get_piece_positions(self):
+        return [p.pos for p in self.pieces]

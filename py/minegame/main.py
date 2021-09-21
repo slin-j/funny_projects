@@ -31,9 +31,12 @@ btn1 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (20, 20)),
 
 game_map = environment.earth(game_surface)
 user.miner_list.append(resource_collect.miner((15*20,10*20)))
+user.miner_list.append(resource_collect.miner((20,300)))
+print(user.miner_list[-2].PRODUCTION_RATE)
 user.storage_list.append(storage.storage_container((40*20,25*20)))
+user.storage_list.append(storage.storage_container((200,300)))
 
-user.conveyor_list.append(transport.conveyor_belt(([(x*20,10*20) for x in range(16,40)] + [(40*20,y*20) for y in range(10,25)]), tier=3))
+user.conveyor_list.append(transport.conveyor_belt(([(x*20,10*20) for x in range(16,40)] + [(40*20,y*20) for y in range(10,25)]), tier=5))
 user.conveyor_list.append(transport.conveyor_belt(([x*20, 26*20] for x in range(40,20,-1)), tier=3))
 
 user.miner_list[0].set_out_belt(user.conveyor_list[0], user.miner_list[0].pos)
@@ -74,8 +77,16 @@ while True:
                     build_list.append(p)
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1: # LMB
-                    if transport.validate_belt_geometry(build_list) == True:
-                        user.conveyor_list.append(transport.conveyor_belt(build_list, tier=3))
+                    if transport.validate_belt_geometry(user, build_list) == True:
+                        #! belt must strart/end on the same position as the machine
+                        # check if any machines are found to bind belt to 
+                        pin, pout = False, False
+                        if user.is_pos_occupied(build_list[0]) != False: pin = build_list.pop(0)
+                        if user.is_pos_occupied(build_list[-1]) != False: pout = build_list.pop(-1)
+                        user.conveyor_list.append(transport.conveyor_belt(build_list, tier=5)) # create belt
+
+                        if pin != False: user.bind_belt_to_machine(user.conveyor_list[-1], False, pin)
+                        if pout != False: user.bind_belt_to_machine(user.conveyor_list[-1], True, pout)       
                     else:
                         print('invalid belt-shape!') #todo change to a ui warning
                     build_list = []
@@ -88,7 +99,7 @@ while True:
 
     user.update_inout_interfaces()
 
-    # print(len(cont1.storage))
+    print(len(user.storage_list[0].storage))
 
     # draw plain map
     game_map.draw_dbg_grid(img_loader.SCR_HEIGHT, img_loader.SCR_WIDTH)
