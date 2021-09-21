@@ -77,4 +77,4 @@ def calculate_beltpiece_img(input:list[transport.belt_piece], belt_tier:int) -> 
             if input[1].pos[0] > input[2].pos[0]: # out to the left
                 return int(4 + belt_tier*8)
 
-        return -1 # no texture
+        return False # no texture
