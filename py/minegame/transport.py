@@ -29,6 +29,7 @@ class interface_in:
     def set_in_belt(self, belt, block_pos):
         self.in_belt = belt
         self.in_belt.out_block_pos = block_pos
+        self.in_belt.update_belt_piece_img()
 
     def import_material_from_belt(self):
         if len(self.in_buffer) < self.in_buffer_size:
@@ -45,6 +46,7 @@ class interface_out:
     def set_out_belt(self, belt, block_pos):
         self.out_belt = belt
         self.out_belt.in_block_pos = block_pos
+        self.out_belt.update_belt_piece_img()
 
     # transfer entity from out_buffer to out_belt, if space is available and buffer not empty
     def export_material_to_belt(self):
@@ -90,6 +92,7 @@ class conveyor_belt:
             if p.holding_entity != None: p.holding_entity.draw_shape(p.pos, surface)
             
     def update_belt_piece_img(self):
+        a = 1
         for i,p in enumerate(self.pieces):
             if i == 0: # first -> use machine on the left
                 p.belt_img_index = img.calculate_beltpiece_img([belt_piece(self.in_block_pos)] + self.pieces[:2], self.tier)
