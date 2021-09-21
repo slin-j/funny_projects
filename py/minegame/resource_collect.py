@@ -20,7 +20,7 @@ class miner(transport.interface_out):
         r = pygame.Rect(self.pos, self.size)
         pygame.draw.rect(surface, [255, 0 , 255], r)
 
-    # update internalbuffer with newly spawned material and return the length of the buffer
+    # update internalbuffer with newly spawned material
     def update_spawner(self):
         if time.time_ns() - self.last_update >= self.PRODUCTION_RATE:
             self.last_update += self.PRODUCTION_RATE

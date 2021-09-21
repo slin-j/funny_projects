@@ -5,6 +5,20 @@ import time
 import entity
 import img_loader as img
 
+def validate_belt_geometry(input:list):
+    if len(input) == 0: return False
+    if len(input) == 1: return True
+    for i in range(len(input)-1):
+        dx = abs(input[i][0]-input[i+1][0])
+        dy = abs(input[i][1]-input[i+1][1])
+        if (dx == 20 and dy == 0) or (dx == 0 and dy == 20): # valid if they are touching eachother on only one side
+            continue
+        if input.count(input[i]) >= 2: # duplicate
+            return False
+        if dx >= 20 or dy >= 20: # touching only on corner or not touching entirely
+            return False
+    return True
+
 class interface_in:
     def __init__(self) -> None:
         self.in_pos = ()
