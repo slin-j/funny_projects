@@ -17,7 +17,7 @@ class miner(transport.interface_out):
             self.size = (20, 20)
 
     def draw_shape(self, surface:pygame.Surface):
-        r = pygame.Rect(self.position, self.size)
+        r = pygame.Rect(self.pos, self.size)
         pygame.draw.rect(surface, [255, 0 , 255], r)
 
     # update internalbuffer with newly spawned material and return the length of the buffer

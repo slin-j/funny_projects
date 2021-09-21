@@ -36,7 +36,7 @@ conveyor_list.append(transport.conveyor_belt(([(x*20,10*20) for x in range(16,40
                                              [(40*20,y*20) for y in range(10,25)]), tier=3))
 conveyor_list.append(transport.conveyor_belt(([x*20, 26*20] for x in range(40,20,-1)), tier=3))
 
-miner1.set_out_belt(conveyor_list[0], miner1.position)
+miner1.set_out_belt(conveyor_list[0], miner1.pos)
 cont1.set_in_belt(conveyor_list[0], cont1.pos)
 cont1.set_out_belt(conveyor_list[1], cont1.pos)
 
