@@ -10,9 +10,9 @@ class minegame_gamer():
         for m in self.miner_list: # miners
             m.update_spawner() 
             m.export_material_to_belt()
-        for c in self.conveyor_list: # belts
-            c.import_material_from_belt()
-            c.export_material_to_belt()
+        for s in self.storage_list: # belts
+            s.import_material_from_belt()
+            s.export_material_to_belt()
         
     def draw_machine_shapes(self, surface:pygame.Surface):
         for c in self.conveyor_list: # belts
