@@ -10,9 +10,10 @@ class miner(transport.interface_out):
         super().__init__()
         self.PRODUCTION_RATE = 2.222e8 # 400ms
         self.last_update = time.time_ns()
-
+        
         if len(position) == 2:
-            self.position = position
+            self.pos = position # set pos of the machine
+            #todo set interface_out.out_pos
             self.size = (20, 20)
 
     def draw_shape(self, surface:pygame.Surface):

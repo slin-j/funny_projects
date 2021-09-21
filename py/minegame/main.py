@@ -77,7 +77,6 @@ while True:
                     conveyor_list.append(transport.conveyor_belt(build_list, tier=3))
                     build_list = []
                 
-
         btn_manager.process_events(event)
     btn_manager.update(dt)
 

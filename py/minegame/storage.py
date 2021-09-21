@@ -1,5 +1,4 @@
 import pygame
-import time
 
 import transport
 
@@ -8,10 +7,12 @@ STORAGE_SIZE = 1000
 class storage_container(transport.interface_in, transport.interface_out):
     def __init__(self, position:tuple) -> None:
         super().__init__()
-        self.in_buffer_size = 1
-        self.out_buffer_size = 1
+        self.in_buffer_size = 0
+        self.out_buffer_size = 0
+
         if len(position) == 2:
             self.pos = position
+            #todo set pos of interface in and out
             self.storage = []
             self.size = (20, 20) # px
 

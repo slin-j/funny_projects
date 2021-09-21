@@ -7,6 +7,7 @@ import img_loader as img
 
 class interface_in:
     def __init__(self) -> None:
+        self.in_pos = ()
         self.in_buffer = []
         self.in_buffer_size = 100
         self.in_belt = None
@@ -22,6 +23,7 @@ class interface_in:
 
 class interface_out:
     def __init__(self) -> None:
+        self.out_pos = ()
         self.out_buffer = []
         self.out_buffer_size = 100
         self.out_belt = None
@@ -41,6 +43,7 @@ class belt_piece:
         self.pos = pos
         self.holding_entity = None # holds entities
         self.is_standing = False # only really needed for the last piece to ensure the collect only takes it when it waited there for one update-cycle
+        self.belt_img_index = img.no_texture # index in the img_loader.belt list (graphic for this belt-piece)
 
 class conveyor_belt: 
     def __init__(self, positions:list[tuple], tier:int) -> None:
@@ -49,7 +52,7 @@ class conveyor_belt:
             if self.tier == 1: self.UPDATE_INTERVAL = 1.000e9 # 60/min
             elif self.tier == 2: self.UPDATE_INTERVAL = 5.000e8 # 120/min
             elif self.tier == 3: self.UPDATE_INTERVAL = 2.222e8 # 270/min
-            elif self.tier == 4: self.UPDATE_INTERVAL = 1.250e8 # 450/min
+            elif self.tier == 4: self.UPDATE_INTERVAL = 1.250e8 # 480/min
             elif self.tier == 5: self.UPDATE_INTERVAL = 7.692e7 # 780/min
         else: raise ValueError('Invalid belt tier! Valid are 1 to 5')
         self.last_update = time.time_ns()
@@ -62,74 +65,32 @@ class conveyor_belt:
         self.in_block_pos = ()
         self.out_block_pos = ()
 
+        self.update_belt_piece_img()
+
     def draw_shape_with_materials(self, surface:pygame.Surface):
+        for p in self.pieces:
+            # draw belt-pieces
+            try: surface.blit(img.belt[p.belt_img_index], p.pos) # draw belt with the right texture (tier and direction matter)
+            except IndexError: surface.blit(img.no_texture, p.pos) # you probably didnt run self.update_belt_piece_img() to update the images 
+            # draw materials on belt
+            if p.holding_entity != None: p.holding_entity.draw_shape(p.pos, surface)
+            
+    def update_belt_piece_img(self):
         for i,p in enumerate(self.pieces):
             if i == 0: # first -> use machine on the left
-                surface.blit(self.calculate_beltpiece_img([belt_piece(self.in_block_pos)] + self.pieces[:2], self.tier), self.pieces[i].pos)
+                p.belt_img_index = img.calculate_beltpiece_img([belt_piece(self.in_block_pos)] + self.pieces[:2], self.tier)
             elif i == len(self.pieces)-1: # last -> use machine on the right
-                surface.blit(self.calculate_beltpiece_img(self.pieces[-2:] + [belt_piece(self.out_block_pos)], self.tier), self.pieces[i].pos)
+                p.belt_img_index = img.calculate_beltpiece_img(self.pieces[-2:] + [belt_piece(self.out_block_pos)], self.tier)
             else:
-                surface.blit(self.calculate_beltpiece_img(self.pieces[i-1:i+2], self.tier), self.pieces[i].pos)
-            if p.holding_entity != None: p.holding_entity.draw_shape(p.pos, surface)
-
-    def calculate_beltpiece_img(self, input:list[belt_piece], belt_tier:int):
-        belt_tier -= 1
-        if len(input[0].pos) != 2: # no input block found
-            if input[1].pos[0] < input[2].pos[0]: # out to the right
-                return img.belt[0 + belt_tier*8]
-            if input[1].pos[1] > input[2].pos[1]: # out to top
-                return img.belt[1 + belt_tier*8]
-            if input[1].pos[0] > input[2].pos[0]: # out to the left
-                return img.belt[2 + belt_tier*8]
-            if input[1].pos[1] < input[2].pos[1]: # out to bottom
-                return img.belt[3 + belt_tier*8]
-        if len(input[2].pos) != 2: # no output block found
-            if input[0].pos[0] > input[1].pos[0]: # in from the right
-                return img.belt[2 + belt_tier*8]
-            if input[0].pos[1] < input[1].pos[1]: # in from top
-                return img.belt[3 + belt_tier*8]
-            if input[0].pos[0] < input[1].pos[0]: # in from the left
-                return img.belt[0 + belt_tier*8]
-            if input[0].pos[1] > input[1].pos[1]: # in from below
-                return img.belt[1 + belt_tier*8]
-
-        if input[0].pos[0] < input[1].pos[0]: # in from the left
-            if input[1].pos[0] < input[2].pos[0]: # out to the right
-                return img.belt[0 + belt_tier*8]
-            if input[1].pos[1] > input[2].pos[1]: # out to top
-                return img.belt[4 + belt_tier*8]
-            if input[1].pos[1] < input[2].pos[1]: # out to bottom
-                return img.belt[5 + belt_tier*8]
-        if input[0].pos[0] > input[1].pos[0]: # in from the right
-            if input[1].pos[0] > input[2].pos[0]: # out to the left
-                return img.belt[2 + belt_tier*8]
-            if input[1].pos[1] < input[2].pos[1]: # out to bottom
-                return img.belt[6 + belt_tier*8]
-            if input[1].pos[1] > input[2].pos[1]: # out to top
-                return img.belt[7 + belt_tier*8]
-        if input[0].pos[1] > input[1].pos[1]: # in from below
-            if input[1].pos[1] > input[2].pos[1]: # out to top
-                return img.belt[1 + belt_tier*8]
-            if input[1].pos[0] > input[2].pos[0]: # out to the left
-                return img.belt[5 + belt_tier*8]
-            if input[1].pos[0] < input[2].pos[0]: # out to the right
-                return img.belt[6 + belt_tier*8]
-        if input[0].pos[1] < input[1].pos[1]: # in from top
-            if input[1].pos[1] < input[2].pos[1]: # out to bottom
-                return img.belt[3 + belt_tier*8]
-            if input[1].pos[0] < input[2].pos[0]: # out to the right
-                return img.belt[7 + belt_tier*8]
-            if input[1].pos[0] > input[2].pos[0]: # out to the left
-                return img.belt[4 + belt_tier*8]
-
-        return img.no_texture
-
+                p.belt_img_index = img.calculate_beltpiece_img(self.pieces[i-1:i+2], self.tier)
+            
     def add_material(self, new_mat:entity) -> bool:
         if self.pieces[0].holding_entity == None:   # if space for new material-entity is available
             self.pieces[0].holding_entity = new_mat
             return True
         return False
 
+    # move materials by one position, if the waiting interval is over
     def move_materials(self) -> bool:
         if time.time_ns() - self.last_update >= self.UPDATE_INTERVAL:
             self.last_update += self.UPDATE_INTERVAL
@@ -155,10 +116,3 @@ class conveyor_belt:
             self.pieces[-1].is_standing = False
             return e
         return None
-
-
-    # def get_positions(self) -> list[tuple]:
-    #     return self.positions.copy()
-
-    # def extend(self, new_positions:list[tuple]):
-    #     self.positions.extend(new_positions)
