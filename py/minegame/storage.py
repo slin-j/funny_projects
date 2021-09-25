@@ -2,7 +2,7 @@ import pygame
 
 import transport
 
-STORAGE_SIZE = 1000
+STORAGE_SIZE = 1000000
 
 class storage_container(transport.interface_in, transport.interface_out):
     def __init__(self, position:tuple) -> None:

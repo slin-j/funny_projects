@@ -75,10 +75,12 @@ while True:
                 p = get_grid_cursor_pos()
                 if p not in build_list:
                     build_list.append(p)
+                if transport.validate_belt_geometry(user, build_list) == False and len(build_list) > 1:
+                    build_list.remove(p)
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1: # LMB
                     if transport.validate_belt_geometry(user, build_list) == True:
-                        #! belt must strart/end on the same position as the machine
+                        #! belt must strart/end on the same positions as the machines
                         # check if any machines are found to bind belt to 
                         pin, pout = False, False
                         if user.is_pos_occupied(build_list[0]) != False: pin = build_list.pop(0)
@@ -99,7 +101,8 @@ while True:
 
     user.update_inout_interfaces()
 
-    print(len(user.storage_list[0].storage))
+    # print(len(user.storage_list[0].storage))
+    print(len(user.miner_list[-1].out_buffer))
 
     # draw plain map
     game_map.draw_dbg_grid(img_loader.SCR_HEIGHT, img_loader.SCR_WIDTH)
