@@ -21,18 +21,14 @@ pygame.init()
 pygame.display.set_caption('minegame')
 clock = pygame.time.Clock()
 game_surface = pygame.display.set_mode((img_loader.SCR_WIDTH, img_loader.SCR_HEIGHT),0,32)  # screen
-btn_manager = pygame_gui.UIManager((img_loader.SCR_WIDTH,img_loader.SCR_HEIGHT))
 # menu_surface = pygame.display.set_mode((SCR_WIDTH, SCR_HEIGHT),0,32)  # screen
+build_menu = environment.build_menu(game_surface)
 
 user = player.minegame_gamer()
-
-# gui elements
-btn1 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (20, 20)), text='t1', manager=btn_manager)
 
 game_map = environment.earth(game_surface)
 user.miner_list.append(resource_collect.miner((15*20,10*20)))
 user.miner_list.append(resource_collect.miner((20,300)))
-print(user.miner_list[-2].PRODUCTION_RATE)
 user.storage_list.append(storage.storage_container((40*20,25*20)))
 user.storage_list.append(storage.storage_container((200,300)))
 
@@ -46,6 +42,7 @@ user.storage_list[0].set_out_belt(user.conveyor_list[1], user.storage_list[0].po
 font_normal = pygame.font.SysFont("monospace",16)
 
 is_build_mode = False
+is_build_menu = False
 build_list = []
 
 while True:
@@ -57,17 +54,20 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_q: #! just for development
                 pygame.quit()
                 sys.exit()
-            if event.key == pygame.K_f:
-                user.conveyor_list[0].add_material(entity.copper())
+            if event.key == pygame.K_ESCAPE:
+                is_build_mode = False
+                is_build_menu = False
+                build_menu.set_visibility(False)
+            if event.key == pygame.K_b:
+                build_menu.set_visibility(not build_menu.visible)
 
-        if event.type == pygame.USEREVENT:
-            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == btn1:
-                    is_build_mode = 'belt_tier1'
-                    build_list = []
+        # if event.type == pygame.USEREVENT:
+        #     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+        #         is_build_mode = build_menu.handle_btn_pressed(event.ui_element)
+        #         print(is_build_mode)
         
         if is_build_mode != False:
             # print(is_build_mode)
@@ -92,9 +92,9 @@ while True:
                     else:
                         print('invalid belt-shape!') #todo change to a ui warning
                     build_list = []
-                
-        btn_manager.process_events(event)
-    btn_manager.update(dt)
+
+    build_mode = build_menu.handle_btn_pressed(dt)
+        
 
     for c in user.conveyor_list:
         c.move_materials()
@@ -102,7 +102,7 @@ while True:
     user.update_inout_interfaces()
 
     # print(len(user.storage_list[0].storage))
-    print(len(user.miner_list[-1].out_buffer))
+    # print(len(user.miner_list[-1].out_buffer))
 
     # draw plain map
     game_map.draw_dbg_grid(img_loader.SCR_HEIGHT, img_loader.SCR_WIDTH)
@@ -118,7 +118,7 @@ while True:
     game_surface.blit(game_map.bg, (0, 0))
     text = font_normal.render(f"coord {get_grid_cursor_pos()}", 1, (0,0,0))
     game_surface.blit(text, (5,10))
-    btn_manager.draw_ui(game_surface)
+    build_menu.draw_prompt(game_surface)
 
     # user mouse-pos in grid (rounded down to the next %20 == 0)
     s = pygame.Surface((20,20))
