@@ -1,6 +1,8 @@
 import pygame
 import os
 
+import transport
+
 SCR_WIDTH = 1000
 SCR_HEIGHT = 600
 
@@ -23,3 +25,56 @@ for i in range(5):
 
 # MATERIALS
 copper = pygame.image.load(os.path.join(os.path.dirname(__file__), 'graphics', 'ores', 'copper.png')).convert_alpha()
+
+def calculate_beltpiece_img(input:list[transport.belt_piece], belt_tier:int) -> int:
+        belt_tier -= 1
+        # no connected block found
+        if len(input[0].pos) != 2: # no input block found
+            if input[1].pos[0] < input[2].pos[0]: # out to the right
+                return int(0 + belt_tier*8)
+            if input[1].pos[1] > input[2].pos[1]: # out to top
+                return int(1 + belt_tier*8)
+            if input[1].pos[0] > input[2].pos[0]: # out to the left
+                return int(2 + belt_tier*8)
+            if input[1].pos[1] < input[2].pos[1]: # out to bottom
+                return int(3 + belt_tier*8)
+        if len(input[2].pos) != 2: # no output block found
+            if input[0].pos[0] > input[1].pos[0]: # in from the right
+                return int(2 + belt_tier*8)
+            if input[0].pos[1] < input[1].pos[1]: # in from top
+                return int(3 + belt_tier*8)
+            if input[0].pos[0] < input[1].pos[0]: # in from the left
+                return int(0 + belt_tier*8)
+            if input[0].pos[1] > input[1].pos[1]: # in from below
+                return int(1 + belt_tier*8)
+        # run belt in the connected block 
+        if input[0].pos[0] < input[1].pos[0]: # in from the left
+            if input[1].pos[0] < input[2].pos[0]: # out to the right
+                return int(0 + belt_tier*8)
+            if input[1].pos[1] > input[2].pos[1]: # out to top
+                return int(4 + belt_tier*8)
+            if input[1].pos[1] < input[2].pos[1]: # out to bottom
+                return int(5 + belt_tier*8)
+        if input[0].pos[0] > input[1].pos[0]: # in from the right
+            if input[1].pos[0] > input[2].pos[0]: # out to the left
+                return int(2 + belt_tier*8)
+            if input[1].pos[1] < input[2].pos[1]: # out to bottom
+                return int(6 + belt_tier*8)
+            if input[1].pos[1] > input[2].pos[1]: # out to top
+                return int(7 + belt_tier*8)
+        if input[0].pos[1] > input[1].pos[1]: # in from below
+            if input[1].pos[1] > input[2].pos[1]: # out to top
+                return int(1 + belt_tier*8)
+            if input[1].pos[0] > input[2].pos[0]: # out to the left
+                return int(5 + belt_tier*8)
+            if input[1].pos[0] < input[2].pos[0]: # out to the right
+                return int(6 + belt_tier*8)
+        if input[0].pos[1] < input[1].pos[1]: # in from top
+            if input[1].pos[1] < input[2].pos[1]: # out to bottom
+                return int(3 + belt_tier*8)
+            if input[1].pos[0] < input[2].pos[0]: # out to the right
+                return int(7 + belt_tier*8)
+            if input[1].pos[0] > input[2].pos[0]: # out to the left
+                return int(4 + belt_tier*8)
+
+        return False # no texture

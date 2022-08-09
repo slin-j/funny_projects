@@ -1,0 +1,4 @@
+folium
+selenium
+beautifulsoup4
+geopy

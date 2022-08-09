@@ -10,16 +10,17 @@ class miner(transport.interface_out):
         super().__init__()
         self.PRODUCTION_RATE = 2.222e8 # 400ms
         self.last_update = time.time_ns()
-
+        
         if len(position) == 2:
-            self.position = position
+            self.pos = position # set pos of the machine
+            #todo set interface_out.out_pos
             self.size = (20, 20)
 
     def draw_shape(self, surface:pygame.Surface):
-        r = pygame.Rect(self.position, self.size)
+        r = pygame.Rect(self.pos, self.size)
         pygame.draw.rect(surface, [255, 0 , 255], r)
 
-    # update internalbuffer with newly spawned material and return the length of the buffer
+    # update internalbuffer with newly spawned material
     def update_spawner(self):
         if time.time_ns() - self.last_update >= self.PRODUCTION_RATE:
             self.last_update += self.PRODUCTION_RATE
