@@ -75,15 +75,17 @@ void crop_vector_to_length(sf::Vector3f* v, float length){
 void ihatethis(sf::Vector3f* v){
     // Y
     // rotation
-    float rotanglePOS = std::acos(dot_product_2f(sf::Vector2f(1, 0), sf::Vector2f(v->x, v->y)) / 
-        (vector_abs_2f(sf::Vector2f(1, 0)) * vector_abs_2f(sf::Vector2f(v->x, v->y)))
-    );
+    // float rotanglePOS = std::acos(dot_product_2f(sf::Vector2f(1, 0), sf::Vector2f(v->x, v->y)) / 
+    //     (vector_abs_2f(sf::Vector2f(1, 0)) * vector_abs_2f(sf::Vector2f(v->x, v->y)))
+    // );
 
     // float rotangleNEG = std::acos(dot_product_2f(sf::Vector2f(-1, 0), sf::Vector2f(v->x, v->y)) / 
     //     (vector_abs_2f(sf::Vector2f(-1, 0)) * vector_abs_2f(sf::Vector2f(v->x, v->y)))
     // );
 
-    float rotangle = v->y < 0 ? (2*M_PI) - rotanglePOS : rotanglePOS;
+    float rotangle = angle_between_Vector2f(v->x, v->y, 1, 0);
+
+    // float rotangle = v->y < 0 ? (2*M_PI) - rotanglePOS : rotanglePOS;
     //std::string rottext = rotangle == rotanglePOS ? "POS" : "NEG";  // for debug
 
     // printVector3f("prepvd = ", pvd);
@@ -99,6 +101,27 @@ void ihatethis(sf::Vector3f* v){
     // std::cout << "\nfinalangle (pi - angle) " << rottext+" " << std::to_string(rad_to_deg(rotangle)) << std::endl;
     // std::cout << "\npos angle" << std::to_string(rad_to_deg(rotanglePOS)) << std::endl;
     // std::cout << "\nneg angle" << std::to_string(rad_to_deg(rotangleNEG)) << std::endl;
+}
+
+float calculate_y(sf::Vector3f pvd, sf::Vector3f OP, sf::Vector3f pp){
+    printVector3f("pvd: ", pvd);
+    printVector3f("pp: ", pp);
+    printVector3f("OP: ", OP);
+    
+    ihatethis(&pvd);
+    ihatethis(&pp);
+    ihatethis(&OP);
+
+    printVector3f("pvd: ", pvd);
+    printVector3f("pp: ", pp);
+    printVector3f("OP: ", OP);
+
+    pp.x *= -1;
+
+    float anglePvdOp = angle_between_Vector2f(pvd.x, pvd.z, OP.x-pp.x, OP.z-pp.z);
+    std::cout << "y: " << rad_to_deg(anglePvdOp) << "°" << std::endl;
+
+    return (anglePvdOp/deg_to_rad(PLAYER_VIEW_ANGLE/2)) * WINDOW_HEIGHT_PX/2;
 }
 
 int main()
@@ -128,8 +151,8 @@ int main()
     float speed = PLAYER_SPEED;
 
     std::vector<sf::Vertex> quad;
-    float x_coords[4] = {100.0f, 100.0f, 200.0f, 200.0f};
-    float y_coords[4] = {100.0f, -100.0f, -100.0f, 100.0f};
+    float x_coords[4] = {0.0f, 100.0f, 100.0f, 0.0f};
+    float y_coords[4] = {0.0f, 0.0f, 100.0f, 100.0f};
 
     for(uint8_t i = 0; i < 4; i++){
         quad.push_back(sf::Vertex(sf::Vector2f(x_coords[i], y_coords[i]), i == 0 ? sf::Color::Magenta : sf::Color::Cyan));
@@ -195,12 +218,12 @@ int main()
         lineBuffer.push_back(sf::Vertex(sf::Vector2f(player_pos.x, player_pos.y), sf::Color::Green));
         lineBuffer.push_back(sf::Vertex(sf::Vector2f(player_pos.x+player_view_dir.x*10, player_pos.y+player_view_dir.y*10), sf::Color::Red));
         topview2dWindow.draw(&lineBuffer[0], lineBuffer.size(), sf::Lines);
-        for(sf::Vertex v : quad){
-            lineBuffer.clear();
-            lineBuffer.push_back(sf::Vertex(sf::Vector2f(v.position.x, v.position.y), sf::Color::Green));
-            lineBuffer.push_back(sf::Vertex(sf::Vector2f(player_pos.x, player_pos.y), sf::Color::Red));
-            topview2dWindow.draw(&lineBuffer[0], lineBuffer.size(), sf::Lines);
-        }
+        // for(sf::Vertex v : quad){
+        //     lineBuffer.clear();
+        //     lineBuffer.push_back(sf::Vertex(sf::Vector2f(v.position.x, v.position.y), sf::Color::Green));
+        //     lineBuffer.push_back(sf::Vertex(sf::Vector2f(player_pos.x, player_pos.y), sf::Color::Red));
+        //     topview2dWindow.draw(&lineBuffer[0], lineBuffer.size(), sf::Lines);
+        // }
         lineBuffer.clear();
         // mid cross
         lineBuffer.push_back(sf::Vertex(sf::Vector2f(-10.0f, -10.0f), sf::Color::Yellow));
@@ -237,51 +260,54 @@ int main()
             lineBuffer.clear();
 
             if (x_coords[0] == OP.x && y_coords[0] == OP.y) {first_corner = true;}
-            else {break;}
 
             // if the point is not in the field of view -> skip point
-            float anglePvdOp = angle_between_Vector2f(pvd.x, pvd.y, OP.x-pp.x, OP.y-pp.y);
+            float anglePvdOp = angle_between_Vector2f(OP.x-pp.x, OP.y-pp.y, pvd.x, pvd.y);
             if(std::abs(anglePvdOp) > deg_to_rad(PLAYER_VIEW_ANGLE/2)) {
                 continue;
             } 
-            std::cout << rad_to_deg(anglePvdOp) << "°" << std::endl;
+            std::cout << "x: " << rad_to_deg(anglePvdOp) << "°" << std::endl;
 
             // 2d x/y Calculations
             float x = -1.0f;    // x coordinate to calc on the screen
             float y = -1.0f;    // y coordinate to calc on the screen
 
             // X
-            float t =   (pvd.x*(OP.x-pp.x) + pvd.y*(OP.y-pp.y)) / 
-                        (pvd.x*pvd.x + pvd.y*pvd.y);
+            // float t =   (pvd.x*(OP.x-pp.x) + pvd.y*(OP.y-pp.y)) / 
+            //             (pvd.x*pvd.x + pvd.y*pvd.y);
 
-            float x_ghost = std::sqrt(
-                std::pow(pvd.x*t - (OP.x-pp.x), 2) +
-                std::pow(pvd.y*t - (OP.y-pp.y), 2)
-            );
+            // float x_ghost = std::sqrt(
+            //     std::pow(pvd.x*t - (OP.x-pp.x), 2) +
+            //     std::pow(pvd.y*t - (OP.y-pp.y), 2)
+            // );
 
-            x = focalLenW * (x_ghost / (focalLenW + vector_abs_3f(pvd)*t));
-            if(anglePvdOp > 0) {x *= -1;}
+            // x = focalLenW * (x_ghost / (focalLenW + vector_abs_3f(pvd)*t));
+
+            x = (anglePvdOp/deg_to_rad(PLAYER_VIEW_ANGLE/2)) * WINDOW_WIDTH_PX/2;
+
+            //if(anglePvdOp > 0) {x *= -1;}
             
-            if(first_corner){
-                ihatethis(&pvd);
-                ihatethis(&pp);
-            }
-            ihatethis(&OP);
+            // if(first_corner){
+            //     ihatethis(&pvd);
+            //     ihatethis(&pp);
+            // }
+            // ihatethis(&OP);
+            y = calculate_y(pvd, OP, pp) * -1;
 
-            // normal calculation
-            t =         (pvd.x*(OP.x-pp.x) + pvd.z*(OP.z-pp.z)) / 
-                        (pvd.x*pvd.x + pvd.z*pvd.z);
+            // // normal calculation
+            // float t =         (pvd.x*(OP.x-pp.x) + pvd.z*(OP.z-pp.z)) / 
+            //             (pvd.x*pvd.x + pvd.z*pvd.z);
 
-            float y_ghost = std::sqrt(
-                std::pow(pvd.x*t - (OP.x-pp.x), 2) +
-                std::pow(pvd.z*t - (OP.z-pp.z), 2)
-            );
+            // float y_ghost = std::sqrt(
+            //     std::pow(pvd.x*t - (OP.x-pp.x), 2) +
+            //     std::pow(pvd.z*t - (OP.z-pp.z), 2)
+            // );
 
-            y = -1 * focalLenH/10 * (y_ghost / (focalLenH/10 + vector_abs_3f(pvd)*t));
-            if(angle_between_Vector2f(pvd.x, pvd.z, OP.x-pp.x, OP.z-pp.z) > 0) {y *= -1;}
+            // y = -1 * focalLenH/10 * (y_ghost / (focalLenH/10 + vector_abs_3f(pvd)*t));
+            // if(angle_between_Vector2f(pvd.x, pvd.z, OP.x-pp.x, OP.z-pp.z) > 0) {y *= -1;}
 
 
-            lineBuffer.push_back(sf::Vertex(sf::Vector2f(x, -100), first_corner ? sf::Color::Magenta : sf::Color::Cyan));
+            lineBuffer.push_back(sf::Vertex(sf::Vector2f(x, y), first_corner ? sf::Color::Magenta : sf::Color::Cyan));
             lineBuffer.push_back(sf::Vertex(sf::Vector2f(0, 0), first_corner ? sf::Color::Magenta : sf::Color::Cyan));
             
             // debug-text in top-left corner, but only for the first point to draw
@@ -295,8 +321,8 @@ int main()
                 debug_output += "player pos: " + std::to_string(player_pos.x) + " " + std::to_string(player_pos.y) + " " + std::to_string(player_pos.z) + "\n";
                 debug_output += "player view dir: " + std::to_string(player_view_dir.x) + " " + std::to_string(player_view_dir.y) + " " + std::to_string(player_view_dir.z) + "\n";
                 debug_output += "objecct pos: " + std::to_string(cp.position.x) + " " + std::to_string(cp.position.y) + "\n";
-                debug_output += "t: " + std::to_string(t) + "\n";
-                debug_output += "dist: " + std::to_string(x_ghost) + "\n";
+                // debug_output += "t: " + std::to_string(t) + "\n";
+                // debug_output += "dist: " + std::to_string(x_ghost) + "\n";
                 sf::Text dbg_text = sf::Text(debug_output, font, 24);
                 dbg_text.setPosition(sf::Vector2f(-WINDOW_WIDTH_PX/2, -WINDOW_HEIGHT_PX/2));    // topleft corner
                 main3dWindow.draw(dbg_text);
@@ -305,7 +331,7 @@ int main()
             main3dWindow.draw(&lineBuffer[0], lineBuffer.size(), sf::Lines);
 
             first_corner = false;
-            break;
+            // break;   // only draw first corner
         }
 
 
